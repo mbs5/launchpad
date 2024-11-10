@@ -1,0 +1,1 @@
+import{a as u,b as p}from"./chunk-47QIAWAQ.js";import{b as i}from"./chunk-TZWE5SWO.js";function c(...r){return i(l,r)}function l(r,n,e){if(e>=r.length)return[];if(e<=0)return[...r];let o=r.slice(0,e);u(o,n);let t=[],a=r.slice(e);for(let y of a){let s=p(o,n,y);t.push(s??y)}return t}export{c as a};

@@ -1,0 +1,1 @@
+import{a as o}from"./chunk-TZWE5SWO.js";import{a as t}from"./chunk-ENXBNJ36.js";function l(...n){return o(u,n)}function u(n,y){if(!t(n,2))return n[0];let[e]=n,[,...i]=n;for(let r of i)y(r,e)<0&&(e=r);return e}export{l as a};

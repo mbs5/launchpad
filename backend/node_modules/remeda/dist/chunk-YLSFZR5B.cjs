@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports, "__esModule", {value: true});var _chunk4CZEVLYKcjs = require('./chunk-4CZEVLYK.cjs');function i(...e){return _chunk4CZEVLYKcjs.a.call(void 0, y,e)}function y(e,r){let o={};for(let n of r)n in e&&(o[n]=e[n]);return o}exports.a = i;
