@@ -14,9 +14,12 @@
   },
   "dependencies": {
     "@restackio/ai": "^0.0.82",
+    "framer-motion": "^11.11.11",
+    "lucide-react": "^0.456.0",
     "next": "14.2.13",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",

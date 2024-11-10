@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "description": "Basic Node.js backend example for Next.js frontend using Together and LlamaIndex",
   "scripts": {
-    "dev": "dotenv -e .env tsx watch --include src src/services.ts",
+    "dev": "tsx watch src/services.ts",
     "clean": "rm -rf node_modules",
-    "build": "tsc --build",
+    "build": "tsc",
     "docker:build": "docker build -t restack-nextjs-together-llamaindex-backend .",
     "docker:run": "docker run -p 8000:8000 --network restack-net --env-file .env --env RESTACK_ENGINE_ADDRESS=http://localhost:6233 restack-express-together-llamaindex",
-    "docker:dev": "pnpm docker:build && pnpm docker:run"
+    "docker:dev": "pnpm docker:build && pnpm docker:run",
+    "start": "tsx src/services.ts"
   },
   "dependencies": {
     "@restackio/ai": "^0.0.82",

@@ -8,17 +8,13 @@ export type Example = {
 
 export const examples = [
   {
-    name: "Chat Completion Example",
-    description: "Example workflow to generate greeting and farewell messages",
+    name: "Idea Refinement Assistant",
+    description: "AI assistant that helps refine your project ideas through interactive dialogue",
     integrations: ["together"],
-    workflowName: "chatCompletionBasic",
-    input: { name: "test" },
-  },
-  {
-    name: "LlamaIndex Together Example",
-    description: "Example workflow to query a model with the LlamaIndex and Together integration",
-    integrations: ["together"],
-    workflowName: "llamaindexTogetherSimple",
-    input: { query: "What is the meaning of life?" },
+    workflowName: "ideaRefinementWorkflow",
+    input: { 
+      message: "Hi! I'm here to help refine your project idea. Tell me about what you'd like to build.",
+      stage: "initial" 
+    },
   },
 ];
