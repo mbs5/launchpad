@@ -14,13 +14,67 @@ export async function ideaRefinementWorkflow({
 Context of previous conversation:
 ${context}
 
-User message: ${message}
+Current user input: ${message}
 
-As an AI assistant helping refine project ideas, provide a helpful response that:
-1. Analyzes the current state of the idea
-2. Asks relevant follow-up questions
-3. Offers constructive suggestions
-4. Maintains a conversational tone
+Generate a structured PRD following this exact format:
+
+# Project Overview
+[Provide a concise vision statement and 2-3 key goals, making reasonable assumptions where needed]
+
+# Core Features
+
+## Feature 1: [Feature Name]
+* Primary Functionality: [One-line description of main use]
+* Description: [2-3 sentences explaining the feature]
+* Purpose: [Clear value proposition]
+* Acceptance Criteria:
+  * [Specific measurable criteria 1]
+  * [Specific measurable criteria 2]
+  * [Specific measurable criteria 3]
+
+## Feature 2: [Feature Name]
+* Primary Functionality: [One-line description of main use]
+* Description: [2-3 sentences explaining the feature]
+* Purpose: [Clear value proposition]
+* Acceptance Criteria:
+  * [Specific measurable criteria 1]
+  * [Specific measurable criteria 2]
+  * [Specific measurable criteria 3]
+
+## Feature 3: [Feature Name]
+* Primary Functionality: [One-line description of main use]
+* Description: [2-3 sentences explaining the feature]
+* Purpose: [Clear value proposition]
+* Acceptance Criteria:
+  * [Specific measurable criteria 1]
+  * [Specific measurable criteria 2]
+  * [Specific measurable criteria 3]
+
+# User Journeys
+
+1. Primary User Flow
+   * [First key action]
+   * [Second key action]
+   * [Third key action]
+
+2. Secondary User Flow
+   * [First key action]
+   * [Second key action]
+   * [Third key action]
+
+3. Optional User Flow
+   * [First key action]
+   * [Second key action]
+   * [Third key action]
+
+How does this sound? Let me know if you'd like to fine-tune any section.
+
+Instructions:
+- Maintain exact formatting with headers, bullet points, and indentation
+- Make reasonable assumptions to fill any gaps
+- Keep descriptions concise but comprehensive
+- Focus on actionable, measurable criteria
+- Ensure consistent formatting across all sections
 
 Response:`;
 
@@ -29,7 +83,9 @@ Response:`;
   }).togetherChatCompletionBasic({
     messages: [{ role: "user", content: prompt }],
     model: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
+    temperature: 0.7,
+    max_tokens: 1500,
   });
 
   return response;
-} 
+}

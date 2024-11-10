@@ -6,14 +6,20 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ChatInterface({ example }: { example: ChatExample }) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+type ChatInterfaceProps = {
+  example: ChatExample;
+  previousPRD?: string;
+};
+
+export default function ChatInterface({ example, previousPRD }: ChatInterfaceProps) {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const initialMessages = [{
       role: "assistant",
-      content: example.input.message as string,
+      content: previousPRD || example.input.message as string,
       timestamp: new Date(),
-    },
-  ]);
+    }];
+    return initialMessages;
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async (message: string) => {
