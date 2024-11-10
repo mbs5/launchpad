@@ -10,8 +10,9 @@ type TechStackInput = {
 export async function techStackWorkflow({ 
   message,
   stage,
-  previousMessages = []
-}: TechStackInput) {
+  previousMessages = [],
+  pdfContent = ""
+}: TechStackInput & { pdfContent?: string }) {
   const context = previousMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
   
   let prompt = '';
@@ -20,17 +21,32 @@ export async function techStackWorkflow({
     case 'skills_assessment':
       prompt = `
 Context: ${context}
+${pdfContent ? `Resume Content: ${pdfContent}\n` : ''}
 User message about their skills: ${message}
 
-You are a tech stack advisor. Analyze the user's skills and experience, then ask specific questions about:
-1. Their experience with different programming languages
-2. Their familiarity with various frameworks
-3. Any specific areas they want to improve
+You are a tech stack advisor. Based on the user's project requirements and skills${pdfContent ? ' (from their resume)' : ''}, provide a direct, comprehensive tech stack recommendation. Format your response as follows:
 
-Format your response with:
-- A brief analysis of their current skill level
-- 2-3 focused follow-up questions about their technical background
-- Keep the tone professional but approachable
+# Recommended Tech Stack
+
+## Frontend
+[List recommended frontend technologies with brief justifications]
+
+## Backend
+[List recommended backend technologies with brief justifications]
+
+## Database
+[List recommended database solutions with brief justifications]
+
+## DevOps & Infrastructure
+[List recommended DevOps tools and infrastructure with brief justifications]
+
+## Additional Tools
+[List any additional tools or services that would benefit the project]
+
+# Learning Resources
+[Provide 2-3 key resources for any unfamiliar technologies]
+
+Keep the response concise but thorough, focusing on practical, modern solutions that match the user's skill level and project needs.
 
 Response:`;
       break;
@@ -80,7 +96,9 @@ Response:`;
     taskQueue: 'together',
   }).togetherChatCompletionBasic({
     messages: [{ role: "user", content: prompt }],
-    model: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
+    model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+    temperature: 0.7,
+    max_tokens: 20000,
   });
 
   return response;

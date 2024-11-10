@@ -1,26 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatExample, Message } from "@/app/types/chat";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { motion, AnimatePresence } from "framer-motion";
+import PDFUpload from "./PDFUpload";
 
 type ChatInterfaceProps = {
   example: ChatExample;
   previousPRD?: string;
+  initialMessage?: string;
+  onMessagesUpdate?: (messages: Message[]) => void;
+  showPDFUpload?: boolean;
 };
 
-export default function ChatInterface({ example, previousPRD }: ChatInterfaceProps) {
+export default function ChatInterface({ example, previousPRD, initialMessage, onMessagesUpdate, showPDFUpload = false }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(() => {
-    const initialMessages = [{
+    return [{
       role: "assistant",
-      content: previousPRD || example.input.message as string,
+      content: initialMessage || example.input.message as string,
       timestamp: new Date(),
     }];
-    return initialMessages;
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [pdfFile, setPDFFile] = useState<{ name: string; size: number } | null>(null);
+
+  useEffect(() => {
+    setMessages([{
+      role: "assistant",
+      content: initialMessage || example.input.message as string,
+      timestamp: new Date(),
+    }]);
+  }, [example, initialMessage]);
+
+  useEffect(() => {
+    onMessagesUpdate?.(messages);
+  }, [messages, onMessagesUpdate]);
 
   const handleSend = async (message: string) => {
     const newMessage: Message = {
@@ -63,6 +79,25 @@ export default function ChatInterface({ example, previousPRD }: ChatInterfacePro
     }
   };
 
+  const handlePDFUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('pdf', file);
+
+    try {
+      const response = await fetch('/api/upload-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setPDFFile({ name: file.name, size: file.size });
+        handleSend(`Process my resume: ${file.name}`);
+      }
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[700px] w-full max-w-3xl bg-black/40 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/10">
       <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
@@ -92,6 +127,17 @@ export default function ChatInterface({ example, previousPRD }: ChatInterfacePro
           )}
         </AnimatePresence>
       </div>
+      
+      {showPDFUpload && (
+        <div className="px-8 pb-4">
+          <PDFUpload
+            onUpload={handlePDFUpload}
+            onRemove={() => setPDFFile(null)}
+            currentFile={pdfFile}
+          />
+        </div>
+      )}
+      
       <ChatInput onSend={handleSend} isLoading={isLoading} />
     </div>
   );

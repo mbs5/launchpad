@@ -17,7 +17,7 @@ export async function chatCompletionBasic({ name }: { name: string }) {
         taskQueue: 'together',
     }).togetherChatCompletionBasic({
         messages: [{ "role": "user", "content": `Write a greeting message to ${name}` }],
-        model: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
+        model: 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo',
 
 
     });
@@ -28,7 +28,7 @@ export async function chatCompletionBasic({ name }: { name: string }) {
         taskQueue: 'together',
     }).togetherChatCompletionBasic({
         messages: [{ "role": "user", "content": `Write a goodbye message to ${name}` }],
-        model: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
+        model: 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo',
         response_format: {
             type: 'json_object',
             // @ts-ignore

@@ -5,14 +5,8 @@ import ChatInterface from "../chat/ChatInterface";
 import { examples } from "../examplesList";
 import PreferencesDialog, { ProjectPreferences } from "../dialogs/PreferencesDialog";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog";
-
-type TabStatus = "inactive" | "active" | "completed";
-
-interface TabState {
-  status: TabStatus;
-  preferences?: ProjectPreferences;
-  refinedPRD?: string;
-}
+import { Message, ChatExample, TabStatus, TabState } from "../types/chat";
+import { FileText } from "lucide-react";
 
 export default function TabView() {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,7 +14,8 @@ export default function TabView() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [tabStates, setTabStates] = useState<TabState[]>(
     examples.map((_, idx) => ({
-      status: idx === 0 ? "active" : "inactive"
+      status: idx === 0 ? "active" : "inactive",
+      messages: []
     }))
   );
 
@@ -32,18 +27,57 @@ export default function TabView() {
     setActiveTab(idx);
   };
 
+  const handleMessagesUpdate = (messages: Message[]) => {
+    setTabStates(prev => {
+      const newStates = [...prev];
+      newStates[activeTab] = {
+        ...newStates[activeTab],
+        messages
+      };
+      return newStates;
+    });
+  };
+
   const handleConfirm = () => {
+    const currentMessages = tabStates[0].messages || [];
+    const lastAIMessage = currentMessages
+      .filter(msg => msg.role === "assistant")
+      .pop()?.content;
+    
+    if (!lastAIMessage) return;
+    
+    setTabStates(prev => {
+      const newStates = [...prev];
+      newStates[0] = {
+        ...newStates[0],
+        status: "completed",
+        refinedPRD: lastAIMessage
+      };
+      return newStates;
+    });
+    
     setShowConfirmation(false);
     setShowPreferences(true);
   };
 
   const handlePreferencesSubmit = (preferences: ProjectPreferences) => {
+    const refinedIdea = tabStates[0].refinedPRD;
+    
     setTabStates(prev => {
       const newStates = [...prev];
       newStates[1] = {
         ...newStates[1],
         status: "active",
-        preferences
+        preferences,
+        messages: [],
+        initialMessage: `Please share your technical skillset so I can recommend a tech stack tailored to your project needs and expertise.
+
+I'll use this information along with your preferences (${preferences.complexity} complexity, ${preferences.timeline} timeline) to suggest the most suitable technologies.
+
+Specifically, tell me about:
+1. Programming languages you're proficient in
+2. Frameworks or libraries you've worked with
+3. Your experience level with different areas (frontend, backend, DevOps, etc.)`
       };
       return newStates;
     });
@@ -90,6 +124,9 @@ export default function TabView() {
             <ChatInterface 
               example={examples[activeTab]} 
               previousPRD={activeTab === 1 ? tabStates[0].refinedPRD : undefined}
+              initialMessage={activeTab === 1 ? tabStates[1].initialMessage : undefined}
+              onMessagesUpdate={handleMessagesUpdate}
+              showPDFUpload={activeTab === 1}
             />
           </div>
         </div>
@@ -99,35 +136,30 @@ export default function TabView() {
       <div className="w-[300px] border-l border-white/[0.05] flex flex-col">
         <div className="p-6">
           <h3 className="text-lg font-light text-white/90 mb-4">Additional Info</h3>
-          {activeTab === 1 && tabStates[1].preferences ? (
+          {activeTab === 1 && (
             <div className="space-y-4">
-              <div>
-                <h4 className="text-white/70 text-sm font-medium mb-2">Project Timeline</h4>
-                <p className="text-white/50 text-sm">{tabStates[1].preferences.timeline}</p>
-              </div>
-              <div>
-                <h4 className="text-white/70 text-sm font-medium mb-2">Complexity</h4>
-                <p className="text-white/50 text-sm">{tabStates[1].preferences.complexity}</p>
-              </div>
-              <div>
-                <h4 className="text-white/70 text-sm font-medium mb-2">Priority</h4>
-                <p className="text-white/50 text-sm">{tabStates[1].preferences.priority}</p>
-              </div>
-              <div>
-                <h4 className="text-white/70 text-sm font-medium mb-2">Deployment</h4>
-                <p className="text-white/50 text-sm">{tabStates[1].preferences.deployment}</p>
-              </div>
-              <div>
-                <h4 className="text-white/70 text-sm font-medium mb-2">Team Size</h4>
-                <p className="text-white/50 text-sm">{tabStates[1].preferences.team}</p>
-              </div>
+              {tabStates[1].preferences && (
+                <>
+                  <div>
+                    <h4 className="text-white/70 text-sm font-medium mb-2">Project Timeline</h4>
+                    <p className="text-white/50 text-sm">{tabStates[1].preferences.timeline}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-white/70 text-sm font-medium mb-2">Complexity</h4>
+                    <p className="text-white/50 text-sm">{tabStates[1].preferences.complexity}</p>
+                  </div>
+                </>
+              )}
+              {tabStates[1].uploadedPDF && (
+                <div>
+                  <h4 className="text-white/70 text-sm font-medium mb-2">Uploaded Resume</h4>
+                  <div className="flex items-center gap-2 p-2 bg-white/[0.03] rounded-lg">
+                    <FileText className="w-4 h-4 text-white/60" />
+                    <span className="text-sm text-white/50">{tabStates[1].uploadedPDF.name}</span>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <p className="text-white/50 text-sm">
-              {activeTab === 1 
-                ? "Please complete preferences to see additional information" 
-                : `Sidebar content for ${examples[activeTab].name}`}
-            </p>
           )}
         </div>
       </div>
