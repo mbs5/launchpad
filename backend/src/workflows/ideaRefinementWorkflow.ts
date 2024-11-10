@@ -82,7 +82,7 @@ Response:`;
     taskQueue: 'together',
   }).togetherChatCompletionBasic({
     messages: [{ role: "user", content: prompt }],
-    model: 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo',
+    model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
     temperature: 0.7,
     max_tokens: 1500,
   });

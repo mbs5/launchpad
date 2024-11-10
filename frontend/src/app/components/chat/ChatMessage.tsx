@@ -1,10 +1,17 @@
+import { Copy } from "lucide-react";
+
 type Message = {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
 };
 
-export default function ChatMessage({ message }: { message: Message }) {
+type ChatMessageProps = {
+  message: Message;
+  onCopyToSidebar?: (content: string) => void;
+};
+
+export default function ChatMessage({ message, onCopyToSidebar }: ChatMessageProps) {
   const isUser = message.role === "user";
 
   const formatContent = (content: string) => {
@@ -84,6 +91,16 @@ export default function ChatMessage({ message }: { message: Message }) {
           </div>
         </div>
       </div>
+
+      {!isUser && onCopyToSidebar && (
+        <button
+          onClick={() => onCopyToSidebar(message.content)}
+          className="absolute right-4 top-4 p-2 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white/20"
+          title="Copy to PRD"
+        >
+          <Copy className="w-4 h-4 text-white/70" />
+        </button>
+      )}
     </div>
   );
 } 

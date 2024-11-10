@@ -44,9 +44,32 @@ You are a tech stack advisor. Based on the user's project requirements and skill
 [List any additional tools or services that would benefit the project]
 
 # Learning Resources
-[Provide 2-3 key resources for any unfamiliar technologies]
 
-Keep the response concise but thorough, focusing on practical, modern solutions that match the user's skill level and project needs.
+## Frontend Resources
+* [Technology Name]
+  * What you'll learn: [One line explaining specific skills/concepts]
+  * Video Tutorial: [Title with actual YouTube URL in markdown format]
+  * Documentation: [Link to official docs or comprehensive guide]
+
+## Backend Resources
+* [Technology Name]
+  * What you'll learn: [One line explaining specific skills/concepts]
+  * Video Tutorial: [Title with actual YouTube URL in markdown format]
+  * Documentation: [Link to official docs or comprehensive guide]
+
+## Database Resources
+* [Technology Name]
+  * What you'll learn: [One line explaining specific skills/concepts]
+  * Video Tutorial: [Title with actual YouTube URL in markdown format]
+  * Documentation: [Link to official docs or comprehensive guide]
+
+## DevOps Resources
+* [Technology Name]
+  * What you'll learn: [One line explaining specific skills/concepts]
+  * Video Tutorial: [Title with actual YouTube URL in markdown format]
+  * Documentation: [Link to official docs or comprehensive guide]
+
+Keep the response concise but thorough, focusing on practical, modern solutions that match the user's skill level and project needs. Make sure all video links are properly formatted as markdown hyperlinks.
 
 Response:`;
       break;
@@ -98,7 +121,7 @@ Response:`;
     messages: [{ role: "user", content: prompt }],
     model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
     temperature: 0.7,
-    max_tokens: 20000,
+    max_tokens: 3000,
   });
 
   return response;

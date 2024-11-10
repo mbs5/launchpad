@@ -78,7 +78,7 @@ export default function PreferencesDialog({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto py-8">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-white/[0.03] border border-white/[0.05] rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
         <h3 className="text-2xl font-light mb-2">Project Preferences</h3>
         <p className="text-white/60 mb-8 font-light">

@@ -4,6 +4,7 @@ export type Example = {
   integrations: string[];
   workflowName: string;
   input: Record<string, unknown>;
+  disabled?: boolean;
 };
 
 export const examples = [
@@ -29,22 +30,24 @@ export const examples = [
   },
   {
     name: "Architecture",
-    description: "Design your system architecture",
+    description: "Coming Soon",
     integrations: ["together"],
     workflowName: "architectureWorkflow",
     input: {
-      message: "I'll help you design your system architecture. What type of application are you building?",
+      message: "Coming Soon",
       stage: "initial"
     },
+    disabled: true
   },
   {
-    name: "Resources",
-    description: "Find learning resources and documentation",
+    name: "Figma Design",
+    description: "Coming Soon",
     integrations: ["together"],
-    workflowName: "resourcesWorkflow",
+    workflowName: "figmaWorkflow",
     input: {
-      message: "I can help you find relevant learning resources. What topics are you interested in?",
+      message: "Coming Soon",
       stage: "initial"
     },
+    disabled: true
   }
 ];

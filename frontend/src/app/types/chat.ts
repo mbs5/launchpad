@@ -2,6 +2,11 @@ export type Message = {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  attachment?: {
+    type: "pdf";
+    name: string;
+    content: string;
+  };
 };
 
 export type ChatExample = {
@@ -26,4 +31,18 @@ export type TabState = {
   refinedPRD?: string;
   initialMessage?: string;
   messages?: Message[];
+};
+
+export type ChatContext = {
+  refinedPRD?: string;
+  techStack?: string;
+  architecture?: string;
+};
+
+export type ChatInterfaceProps = {
+  example: ChatExample;
+  previousPRD?: string;
+  initialMessage?: string;
+  onMessagesUpdate?: (messages: Message[]) => void;
+  context?: ChatContext;
 }; 

@@ -8,7 +8,7 @@ export async function llamaindexTogetherSimple({ query }: { query: string }) {
         taskQueue: 'together',
     }).llamaIndexQueryTogether({
         query,
-        model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
     });
 
     return response;

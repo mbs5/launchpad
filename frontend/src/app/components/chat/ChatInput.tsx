@@ -1,39 +1,67 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { SendHorizontal, Upload } from "lucide-react";
+import { SendHorizontal, Upload, FileText, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type ChatInputProps = {
-  onSend: (message: string) => void;
-  onFileUpload?: (file: File) => void;
+  onSend: (message: string, file?: File) => void;
   isLoading: boolean;
-  showUpload?: boolean;
 };
 
-export default function ChatInput({ onSend, onFileUpload, isLoading, showUpload = false }: ChatInputProps) {
+export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const [message, setMessage] = useState("");
-  const [showUploadMenu, setShowUploadMenu] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && !isLoading) {
-      onSend(message);
+    if ((message.trim() || selectedFile) && !isLoading) {
+      onSend(message, selectedFile || undefined);
       setMessage("");
+      setSelectedFile(null);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type === "application/pdf") {
-      onFileUpload?.(file);
-      setShowUploadMenu(false);
+      setSelectedFile(file);
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-8 border-t border-white/[0.03]">
-      <div className="flex gap-4 max-w-4xl mx-auto relative">
+      {/* Selected File Display */}
+      <AnimatePresence>
+        {selectedFile && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="mb-4 p-2 bg-white/[0.03] rounded-lg flex items-center gap-2"
+          >
+            <FileText className="w-4 h-4 text-white/60" />
+            <span className="text-sm text-white/80 flex-1">{selectedFile.name}</span>
+            <button
+              type="button"
+              onClick={removeFile}
+              className="p-1 hover:bg-white/[0.05] rounded-full transition-colors"
+            >
+              <X className="w-4 h-4 text-white/60" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex gap-4 max-w-4xl mx-auto">
         <input
           type="text"
           value={message}
@@ -44,50 +72,32 @@ export default function ChatInput({ onSend, onFileUpload, isLoading, showUpload 
             transition-all duration-200 font-light"
           disabled={isLoading}
         />
-        
-        {showUpload && (
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowUploadMenu(!showUploadMenu)}
-              className="rounded-2xl px-8 py-4 bg-white/[0.03] backdrop-blur-sm border border-white/[0.05] 
-                text-white/90 hover:bg-white/[0.08] transition-all duration-200"
-            >
-              <Upload className="w-5 h-5" />
-            </button>
-            
-            {showUploadMenu && (
-              <div className="absolute bottom-full mb-2 right-0 w-48 bg-black/90 backdrop-blur-lg border 
-                border-white/10 rounded-xl overflow-hidden shadow-xl">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full px-4 py-3 text-sm text-white/80 hover:bg-white/[0.05] transition-colors 
-                    text-left flex items-center gap-2"
-                >
-                  <FileText className="w-4 h-4" />
-                  Upload Resume (PDF)
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="rounded-2xl px-6 py-4 bg-white/[0.03] backdrop-blur-sm border border-white/[0.05] 
+            text-white/90 hover:bg-white/[0.08] transition-all duration-200 group"
+        >
+          <Upload className="w-5 h-5 group-hover:scale-110 transition-transform" />
+        </button>
 
         <button
           type="submit"
-          disabled={isLoading || !message.trim()}
-          className="rounded-2xl px-8 py-4 bg-white/[0.05] backdrop-blur-sm border border-white/[0.05] 
+          disabled={isLoading || (!message.trim() && !selectedFile)}
+          className="rounded-2xl px-6 py-4 bg-white/[0.05] backdrop-blur-sm border border-white/[0.05] 
             text-white/90 disabled:opacity-50 hover:bg-white/[0.08] transition-all duration-200 
-            disabled:cursor-not-allowed"
+            disabled:cursor-not-allowed group"
         >
-          <SendHorizontal className="w-5 h-5" />
+          <SendHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
         </button>
       </div>
     </form>
