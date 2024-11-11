@@ -4,3 +4,7 @@ dist
 .npmrc
 tsconfig.tsbuildinfo
 .DS_Store
+.env.Example
+
+
+
