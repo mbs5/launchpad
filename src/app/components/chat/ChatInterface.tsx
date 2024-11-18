@@ -37,8 +37,10 @@ export default function ChatInterface({ example, previousPRD, initialMessage, on
   }, [example, initialMessage]);
 
   useEffect(() => {
-    onMessagesUpdate?.(messages);
-  }, [messages, onMessagesUpdate]);
+    if (messages.length > 0) {
+      onMessagesUpdate?.(messages);
+    }
+  }, [messages]);
 
   const handleSend = async (message: string) => {
     setIsLoading(true);
@@ -51,6 +53,23 @@ export default function ChatInterface({ example, previousPRD, initialMessage, on
         content: message,
         timestamp: new Date(),
       };
+      
+      const requestBody = {
+        message,
+        input: {
+          previousMessages: messageHistory,
+          context: context?.refinedPRD || '',
+          stage: example.input.stage,
+          preferences: context?.preferences || null
+        },
+      };
+
+      console.log('ChatInterface - Request:', {
+        stage: example.input.stage,
+        context: context?.refinedPRD || 'No context available',
+        preferences: context?.preferences || 'No preferences set',
+        message
+      });
       
       setMessages(prev => {
         const updated = [...prev, newMessage];
@@ -66,18 +85,7 @@ export default function ChatInterface({ example, previousPRD, initialMessage, on
           response = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message,
-              input: {
-                previousMessages: messageHistory,
-                context: context?.context,
-                stage: example.input.stage,
-                ...(showContext && {
-                  refinedPRD: context?.refinedPRD,
-                  preferences: context?.preferences
-                })
-              },
-            }),
+            body: JSON.stringify(requestBody),
           });
           break;
         } catch (error) {
@@ -92,6 +100,7 @@ export default function ChatInterface({ example, previousPRD, initialMessage, on
       }
 
       const data = await response.json();
+      console.log('ChatInterface - Response:', data);
       
       setMessages(prev => [
         ...prev,
@@ -148,12 +157,13 @@ export default function ChatInterface({ example, previousPRD, initialMessage, on
   return (
     <div className="flex flex-col h-[700px] w-full max-w-3xl bg-black/40 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/10">
       <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence mode="sync">
           {messages.map((msg, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
               {idx === 0 && <ContextDisplay />}

@@ -8,6 +8,14 @@ export async function POST(req: Request) {
   try {
     
     const { message, input } = await req.json();
+    
+    console.log('API Route - Request:', {
+      stage: input.stage,
+      context: input.context,
+      preferences: input.preferences,
+      message
+    });
+
     const previousMessages: Message[] = input?.previousMessages || [];
     
     // Different system prompts based on stage
@@ -45,14 +53,15 @@ Format your responses using the following markdown structure:
 
         case 'skills_assessment':
           return `You are a technical advisor helping choose the right tech stack.
-Consider the following context for your recommendations:
-${input.context ? `Project Overview: ${input.context}` : ''}
+
+Based on the provided project overview:
+${input.context ? `${input.context}\n` : ''}
 ${input.preferences ? `
-Preferences:
-- Complexity: ${input.preferences.complexity}
+And considering these project preferences:
+- Complexity Level: ${input.preferences.complexity}
 - Timeline: ${input.preferences.timeline}
-- Priority: ${input.preferences.priority}
-- Deployment: ${input.preferences.deployment}
+- Main Priority: ${input.preferences.priority}
+- Deployment Preference: ${input.preferences.deployment}
 - Team Size: ${input.preferences.team}
 ` : ''}
 
@@ -81,12 +90,7 @@ Format your responses as a structured analysis:
 ## DevOps
 - Recommended: [Technologies]
 - Rationale: [Explanation]
-- Learning Curve: [Assessment]
-
-## Additional Considerations
-- Scalability: [Notes]
-- Cost: [Estimates]
-- Time to Market: [Assessment]`;
+- Learning Curve: [Assessment]`;
 
         default:
           return input?.context || '';
@@ -107,6 +111,13 @@ Format your responses as a structured analysis:
       { role: "user" as const, content: message }
     ];
 
+    console.log('API Route - Together AI Request:', {
+      messages: [...systemMessage, ...messages],
+      model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+      temperature: 0.7,
+      max_tokens: 3000
+    });
+
     const completion = await together.chat.completions.create({
       messages: [...systemMessage, ...messages],
       model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
@@ -116,6 +127,8 @@ Format your responses as a structured analysis:
     });
 
     const content = completion.choices?.[0]?.message?.content || "Sorry, I couldn't process that.";
+    
+    console.log('API Route - AI Response:', content);
     
     return NextResponse.json({ content });
   } catch (error) {

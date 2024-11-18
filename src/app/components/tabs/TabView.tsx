@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState, useCallback } from "react";
 import ChatInterface from "../chat/ChatInterface";
 import { examples } from "../examplesList";
 import PreferencesDialog, { ProjectPreferences } from "../dialogs/PreferencesDialog";
@@ -114,7 +115,7 @@ export default function TabView() {
     setActiveTab(idx);
   };
 
-  const handleMessagesUpdate = (messages: Message[]) => {
+  const handleMessagesUpdate = useCallback((messages: Message[]) => {
     setTabStates(prev => {
       const newStates = [...prev];
       newStates[activeTab] = {
@@ -123,7 +124,7 @@ export default function TabView() {
       };
       return newStates;
     });
-  };
+  }, [activeTab]);
 
   const handleConfirm = () => {
     const currentMessages = tabStates[0].messages || [];
@@ -166,19 +167,12 @@ export default function TabView() {
       newStates[1] = {
         ...newStates[1],
         status: "active",
-        preferences,
-        messages: [],
-        initialMessage: `Please share your technical skillset so I can recommend a tech stack tailored to your project needs and expertise.
-
-I'll use this information along with your preferences (${preferences.complexity} complexity, ${preferences.timeline} timeline) to suggest the most suitable technologies.
-
-Specifically, tell me about:
-1. Programming languages you're proficient in
-2. Frameworks or libraries you've worked with
-3. Your experience level with different areas (frontend, backend, DevOps, etc.)`
+        preferences: preferences,
+        messages: []
       };
       return newStates;
     });
+    
     setShowPreferences(false);
     setActiveTab(1);
   };
@@ -279,12 +273,11 @@ What specific technologies or concepts would you like to learn more about?`;
           <div className="w-full max-w-4xl">
             <ChatInterface 
               example={examples[activeTab]} 
-              previousPRD={activeTab === 1 ? tabStates[0].refinedPRD : undefined}
-              initialMessage={getTabInitialMessage(activeTab)}
               onMessagesUpdate={handleMessagesUpdate}
               context={{
                 refinedPRD: tabStates[0].refinedPRD,
-                techStack: tabStates[1]?.messages?.find(msg => msg.role === "assistant")?.content,
+                preferences: tabStates[1]?.preferences,
+                context: tabStates[0].context
               }}
               onCopyToSidebar={(content) => updateSectionContent(content)}
             />
