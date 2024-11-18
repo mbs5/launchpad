@@ -39,49 +39,21 @@ export default function Carousel() {
   };
 
   return (
-    <>
-      <div className="relative h-full flex items-center">
-        <div className="w-full overflow-hidden rounded-3xl shadow-2xl">
-          <div className="flex flex-col h-[80vh] bg-white/[0.02] backdrop-blur-lg border border-white/[0.05]">
-            <div className="flex-1 overflow-hidden">
-              <ChatInterface example={examples[currentIndex]} />
-            </div>
+    <div className="relative flex flex-col md:flex-row items-center">
+      <div className="w-full overflow-hidden rounded-3xl shadow-2xl">
+        <div className="flex flex-col h-[80vh] bg-white/[0.02] backdrop-blur-lg border border-white/[0.05]">
+          <div className="flex-1 overflow-hidden">
+            <ChatInterface example={examples[currentIndex]} />
           </div>
         </div>
-        
-        <div className="absolute -left-4 flex items-center">
-          <button
-            onClick={handlePrev}
-            className="p-4 rounded-full bg-white/[0.03] backdrop-blur-sm border border-white/[0.05] 
-              text-white/80 hover:bg-white/[0.05] transition-all duration-200 shadow-lg"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        </div>
-        
-        <div className="absolute -right-4 flex items-center">
-          <button
-            onClick={handleNext}
-            className="p-4 rounded-full bg-white/[0.03] backdrop-blur-sm border border-white/[0.05] 
-              text-white/80 hover:bg-white/[0.05] transition-all duration-200 shadow-lg"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
-        
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex justify-center gap-2">
-          {examples.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                idx === currentIndex 
-                  ? "bg-white/90 w-8" 
-                  : "bg-white/20 hover:bg-white/30"
-              }`}
-            />
-          ))}
-        </div>
+      </div>
+      <div className="absolute flex items-center justify-between w-full">
+        <button onClick={handlePrev} className="p-4 rounded-full bg-white/[0.03] text-white/80">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button onClick={handleNext} className="p-4 rounded-full bg-white/[0.03] text-white/80">
+          <ChevronRight className="w-6 h-6" />
+        </button>
       </div>
 
       <ConfirmationDialog
@@ -96,6 +68,6 @@ export default function Carousel() {
         onClose={() => setShowPreferencesDialog(false)}
         onSubmit={handlePreferencesSubmit}
       />
-    </>
+    </div>
   );
 } 
