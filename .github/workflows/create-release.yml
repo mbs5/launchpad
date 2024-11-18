@@ -1,0 +1,28 @@
+name: Create Release Draft
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get commit messages
+        id: get_messages
+        run: |
+          MESSAGES=$(git log -1 --pretty=format:"%s%n%b")
+          echo "messages=$MESSAGES" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: ${{ steps.get_messages.outputs.messages }}
+          draft: true
