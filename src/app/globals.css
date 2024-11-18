@@ -77,15 +77,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
-@media (max-width: 640px) {
-  .custom-class {
-    /* Styles for small screens */
-  }
-}
-
-@media (min-width: 641px) and (max-width: 768px) {
-  .custom-class {
-    /* Styles for medium screens */
-  }
-}
