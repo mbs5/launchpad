@@ -113,14 +113,14 @@ Format your responses as a structured analysis:
 
     console.log('API Route - Together AI Request:', {
       messages: [...systemMessage, ...messages],
-      model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
       temperature: 0.7,
       max_tokens: 3000
     });
 
     const completion = await together.chat.completions.create({
       messages: [...systemMessage, ...messages],
-      model: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
       temperature: 0.7,
       max_tokens: 3000,
       stop: ["Human:", "Assistant:"]
